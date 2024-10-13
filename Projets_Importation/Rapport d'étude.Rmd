@@ -1,0 +1,141 @@
+---
+title: "Rapport d'étude"
+author: "Ilan FUNDENBERGER et Antoine HOUY"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+Dans ce rapport, nous allons voir l'importance d'avoir une bonne étiquette DPE (notamment sur l'aspect financier). Nous présenteront d'abord les communes possèdant les meilleures logement (selon l'étiquette DPE) et celles qui ont le plus de passoire thermique. Ensuite, nous verrons l'importance d'avoir une bonne étiquette DPE et pour finir ce qui impactent sur la consommation d'energie et comment consommer moins.
+
+```{r}
+df = read.csv("C:/Etudes/BUT SD/Année 2/R/Projet_DPE_logement/test.csv", sep = ",", dec = ".")
+```
+
+Voici donc les communes possèdant le plus de passoires thermiques :
+
+### Histogramme de la distribution des étiquettes DPE G par Code postal
+
+```{r}
+
+# Chargement des bibliothèques nécessaires
+library(ggplot2)
+library(dplyr)
+
+etiquette <- "G"
+
+# Filtrage des données pour l'étiquette DPE G
+filtered_data_G <- df %>%
+  dplyr::filter(Etiquette_DPE == etiquette,) %>%
+  group_by(Code_postal_.BAN.) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+top_5_G <- filtered_data_G[1:5, ]
+top_5_G <- na.omit(top_5_G)
+
+
+# Si les données sont disponibles, généreration du graphique
+if (nrow(top_5_G) > 0) {
+  ggplot(top_5_G, aes(x = reorder(Code_postal_.BAN., -count), y = count)) +
+    geom_bar(stat = "identity", fill = "blue") +
+    labs(title = "Distribution des étiquettes DPE G par Code postal",
+         x = "Code postal", 
+         y = "Nombre de logements") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+} else {
+  cat("Aucune donnée disponible pour l'étiquette DPE G.")}
+```
+
+Et voici, les communes possèdant le plus de logements avec la meilleure étiquette DPE :
+
+### Histogramme de la distribution des étiquettes DPE A par Code postal
+
+```{r}
+# Chargement des bibliothèques nécessaires
+library(ggplot2)
+library(dplyr)
+
+etiquette <- "A"
+
+# Filtrage des données pour l'étiquette DPE A
+filtered_data_A <- df %>%
+  dplyr::filter(Etiquette_DPE == etiquette,) %>%
+  group_by(Code_postal_.BAN.) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+top_5_A <- filtered_data_A[1:5, ]
+top_5_A <- na.omit(top_5_A)
+
+
+# Si les données sont disponibles, généreration du graphique
+if (nrow(top_5_A) > 0) {
+  ggplot(top_5_A, aes(x = reorder(Code_postal_.BAN., -count), y = count)) +
+    geom_bar(stat = "identity", fill = "blue") +
+    labs(title = "Distribution des étiquettes DPE A par Code postal",
+         x = "Code postal", 
+         y = "Nombre de logements") +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+} else {
+  cat("Aucune donnée disponible pour l'étiquette DPE A.")}
+```
+
+Ici, nous allons voir en moyenne la différence de coût en enérgie par ans qu'il peut y avoir entre les différentes étiquettes DPE.
+
+```{r}
+library(dplyr)
+
+# Calcul de la moyenne des coûts par type de logement
+moyennes <- df %>%
+  group_by(Etiquette_DPE) %>%        # Regrouper par la variable 'Logement'
+  summarise(Moyenne_Cout = mean(Coût_total_5_usages, na.rm = TRUE))  # Calculer la moyenne
+
+print(moyennes)
+```
+
+On peut voir qu'il y a une différence de coût énorme entre un logement avec une étiquette A et G (quasiment 1600 €).
+
+### Le choix du type d'énergie principale de chauffage
+
+```{r}
+library(dplyr)
+
+# Calcul de la moyenne des coûts par type d'e logement'énergie principale de chauffage
+moyennes <- df %>%
+  group_by(Type_énergie_principale_chauffage) %>%        
+  summarise(Moyenne_Cout = mean(Coût_total_5_usages, na.rm = TRUE))  
+
+print(moyennes)
+```
+
+Nous pouvons voir avoir le tableau ci-dessus l'importance de bien choisir sont type d'énergie principale pour le chauffage, le bois en plaquettes forestières étant le moins chères et le GPL le plus chère.
+
+Nous allons maintenant vérifier que l'isolation est bien la clé pour avoir un cout à payer du à la consommation énergétique moins élevé. Pour cela, nous allons utiliser le test de krustal avec les hypothèses suivantes :
+
+H0 : Il n'y a pas de différence dans la distribution de la variable continue (dans notre cas, le coût énergétique) entre les différents niveaux de la variable qualitative (dans notre cas, la qualité de l'isolation).
+
+H1 : Il existe au moins une différence significative dans la distribution de la variable continue entre les groupes
+
+```{r}
+# Test de Kruskal-Wallis
+kruskal_test_enveloppe <- kruskal.test(Coût_total_5_usages ~ Qualité_isolation_enveloppe, data = df)
+kruskal_test_murs <- kruskal.test(Coût_total_5_usages ~ Qualité_isolation_murs, data = df)
+kruskal_test_menuiseries <- kruskal.test(Coût_total_5_usages ~ Qualité_isolation_menuiseries, data = df)
+kruskal_test_plancher_bas <- kruskal.test(Coût_total_5_usages ~ Qualité_isolation_plancher_bas, data = df)
+
+
+# Affichage des résultats
+print(kruskal_test_enveloppe)
+print(kruskal_test_murs)
+print(kruskal_test_menuiseries)
+print(kruskal_test_plancher_bas)
+
+```
+
+Étant donné que les différentes p-value sont beaucoup inférieure au seuil de signification habituel de 0.05, nous pouvez rejeter l'hypothèse nulle (H0), qui stipule qu'il n'y a pas de différence significative entre les groupes.
+
+On conclue qu'il existe des différences significatives dans le coût énergétique entre au moins deux des niveaux des différentes qualité d'isolation que nous avez testés. Cela signifie que la qualité de l'isolation a un impact mesurable sur le coût énergétique.
+
+En pratique, cela signifie que les logements avec une meilleure isolation (comme ceux classés "très bonne") tendent à avoir des coûts énergétiques inférieurs par rapport à ceux avec une isolation "insuffisante". Les résultats confirment donc bien que des améliorations de l'isolation pourraient conduire à des économies sur les coûts d'énergie.
