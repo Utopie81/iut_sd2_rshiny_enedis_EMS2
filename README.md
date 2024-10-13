@@ -35,3 +35,6 @@ shinyapp_code_complet.R:
   - Une version complète et annotée du script Shiny, incluant les commentaires et explications détaillées sur le fonctionnement du code et de l'application. 
   code corespondant a celui presenté dans la vidéo
 
+Liens du sites: 
+ - https://79770m-utopie81.shinyapps.io/Excel/
+
