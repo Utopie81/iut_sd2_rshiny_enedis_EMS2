@@ -14,16 +14,16 @@ explique de les aspect technique de mon application shiny:
   - quelle packtages utiliser
 
 Importation_Api.R:
-Script R dédié à l'importation de données via des API. 
+- Script R dédié à l'importation de données via des API. 
 
 logo.webp:
-Image du logo utilisé dans l'application. 
+- Image du logo utilisé dans l'application. 
 
 shinyapp.R:
-un version shiny condensé de shinyapp_code_complet.R etant le script pour le site en ligne.
+- un version shiny condensé de shinyapp_code_complet.R etant le script pour le site en ligne.
 principale difference seulement 1 graphique 
 
 shinyapp_code_complet.R:
-Une version complète et annotée du script Shiny, incluant les commentaires et explications détaillées sur le fonctionnement du code et de l'application. 
+- Une version complète et annotée du script Shiny, incluant les commentaires et explications détaillées sur le fonctionnement du code et de l'application. 
 code corespondant a celui presenté dans la vidéo
 
