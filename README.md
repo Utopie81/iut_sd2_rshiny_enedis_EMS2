@@ -14,7 +14,10 @@ explique de les aspect technique de mon application shiny:
   - Quelle packtages utiliser
 
 Importation_Api.R:
-  - Script R dédié à l'importation de données via des API
+  - Script R dédié à l'importation de données via des API+3
+
+Rapport d'étude:
+  - 2 documents portant ce nom le premiers et le code markdown le second est le rendu markdown
   
 lien.txt fichier contenant les liens pour acceder au jeux de donnée:
   - Les fichiers adresses corespondent au fichier recuperer sur la Base Adresse National
